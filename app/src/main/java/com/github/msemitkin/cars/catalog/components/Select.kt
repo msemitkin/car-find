@@ -1,6 +1,5 @@
 package com.github.msemitkin.cars.catalog.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.DropdownMenu
@@ -18,20 +17,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.msemitkin.cars.catalog.R
+import com.github.msemitkin.cars.catalog.components.util.clickableWithNoIndication
 
 @Composable
 fun Select(
     items: List<String>,
     selectedItem: String,
+    label: String = "",
     onSelect: (String) -> Unit
 ) {
     var expanded: Boolean by remember { mutableStateOf(false) }
     OutlinedTextField(
         value = selectedItem,
         onValueChange = { },
+        label = { Text(text = label) },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { expanded = !expanded },
+            .clickableWithNoIndication { expanded = !expanded },
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.dropdown_arrow),
@@ -41,7 +43,11 @@ fun Select(
         },
         enabled = false
     )
-    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier.fillMaxWidth()
+    ) {
         for (item in items) {
             DropdownMenuItem(onClick = {
                 onSelect(item)

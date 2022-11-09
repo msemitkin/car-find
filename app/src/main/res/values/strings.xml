@@ -2,4 +2,8 @@
     <string name="app_name">Car Find</string>
     <string name="search_button_text">Search</string>
     <string name="add_new_button_text">Add new</string>
+    <string name="body_type_label">Body Type</string>
+    <string name="car_brand_label">Car Brand</string>
+    <string name="color_label">Color</string>
+    <string name="engine_capacity_label">Engine Capacity</string>
 </resources>
