@@ -8,4 +8,6 @@
     <string name="engine_capacity_label">Engine Capacity</string>
     <string name="price_label">Price</string>
     <string name="statistics_button_text">Statistics</string>
+    <string name="save_button_text">Save</string>
+    <string name="no_cars_found_message">No cars found</string>
 </resources>

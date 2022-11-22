@@ -1,5 +1,7 @@
-package com.github.msemitkin.cars.catalog.dao
+package com.github.msemitkin.cars.catalog.service
 
+import com.github.msemitkin.cars.catalog.dao.CarDao
+import com.github.msemitkin.cars.catalog.dao.CarEntity
 import com.github.msemitkin.cars.catalog.models.BodyType
 import com.github.msemitkin.cars.catalog.models.Car
 import com.github.msemitkin.cars.catalog.models.CarBrand
@@ -7,6 +9,10 @@ import com.github.msemitkin.cars.catalog.models.Color
 
 interface GetCarService {
     fun getById(id: Long): Car
+}
+
+interface GetCarsByColorService {
+    fun getByColor(color: Color): List<Car>
 }
 
 interface SaveCarService {
@@ -17,7 +23,11 @@ interface GetCarsService {
     fun getCars(): List<Car>
 }
 
-class CarService(private val carDao: CarDao) : GetCarService, SaveCarService, GetCarsService {
+class CarService(private val carDao: CarDao) :
+    GetCarService,
+    SaveCarService,
+    GetCarsService,
+    GetCarsByColorService {
 
     override fun save(car: Car): Long {
         val carEntity = toCarEntity(car)
@@ -32,6 +42,11 @@ class CarService(private val carDao: CarDao) : GetCarService, SaveCarService, Ge
     override fun getById(id: Long): Car {
         val carEntity = carDao.getById(id)
         return toCar(carEntity)
+    }
+
+    override fun getByColor(color: Color): List<Car> {
+        val entities = carDao.getByColor(color.name)
+        return entities.map { toCar(it) }
     }
 
     private fun toCarEntity(car: Car) = CarEntity(

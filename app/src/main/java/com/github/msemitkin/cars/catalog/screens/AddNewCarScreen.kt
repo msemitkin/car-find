@@ -164,7 +164,7 @@ fun AddNewCarScreen(
                     )
                 }
             }) {
-                Text("Save")
+                Text(stringResource(R.string.save_button_text))
             }
 
             if (hideKeyboard) {

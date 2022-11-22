@@ -8,8 +8,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.room.Room
-import com.github.msemitkin.cars.catalog.dao.CarService
 import com.github.msemitkin.cars.catalog.dao.Database
+import com.github.msemitkin.cars.catalog.service.CarService
 import com.github.msemitkin.cars.catalog.service.StatisticsService
 import com.github.msemitkin.cars.catalog.ui.theme.CarscatalogTheme
 
@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
                     CarsCatalogNavigable(
                         saveCarService = carService,
                         getCarService = carService,
+                        getCarsByColorService = carService,
                         statisticsService = StatisticsService(carService)
                     )
                 }

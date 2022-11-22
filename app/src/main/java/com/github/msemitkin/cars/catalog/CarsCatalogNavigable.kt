@@ -1,12 +1,8 @@
 package com.github.msemitkin.cars.catalog
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,11 +11,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.github.msemitkin.cars.catalog.components.ApplicationHeader
-import com.github.msemitkin.cars.catalog.dao.GetCarService
-import com.github.msemitkin.cars.catalog.dao.SaveCarService
+import com.github.msemitkin.cars.catalog.models.Color
 import com.github.msemitkin.cars.catalog.screens.AddNewCarScreen
 import com.github.msemitkin.cars.catalog.screens.CarScreen
+import com.github.msemitkin.cars.catalog.screens.CarsScreen
 import com.github.msemitkin.cars.catalog.screens.Homepage
+import com.github.msemitkin.cars.catalog.screens.SearchScreen
+import com.github.msemitkin.cars.catalog.screens.StatisticsScreen
+import com.github.msemitkin.cars.catalog.service.GetCarService
+import com.github.msemitkin.cars.catalog.service.GetCarsByColorService
+import com.github.msemitkin.cars.catalog.service.SaveCarService
 import com.github.msemitkin.cars.catalog.service.StatisticsService
 
 @Composable
@@ -27,7 +28,8 @@ fun CarsCatalogNavigable(
     navHostController: NavHostController = rememberNavController(),
     saveCarService: SaveCarService,
     getCarService: GetCarService,
-    statisticsService: StatisticsService
+    getCarsByColorService: GetCarsByColorService,
+    statisticsService: StatisticsService,
 ) {
     Scaffold(
         topBar = { ApplicationHeader() }
@@ -53,10 +55,27 @@ fun CarsCatalogNavigable(
                     }
                 )
             }
+            composable("search") {
+                SearchScreen(
+                    onSearchClick = { color ->
+                        navHostController.navigate("cars?color=${color.name}")
+                    }
+                )
+            }
+            composable(
+                route = "cars?color={color}",
+                arguments = listOf(navArgument("color") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val color = backStackEntry.arguments
+                    ?.getString("color")!!
+                    .let { Color.valueOf(it) }
+                val cars = getCarsByColorService.getByColor(color)
+                CarsScreen(cars)
+            }
             composable(
                 route = "cars/{carId}",
                 arguments = listOf(
-                    navArgument("carId") { apply { type = NavType.LongType }.build() }
+                    navArgument("carId") { type = NavType.LongType }
                 )
             ) { backStackEntry ->
                 val carId = requireNotNull(backStackEntry.arguments?.getLong("carId"))
@@ -68,19 +87,5 @@ fun CarsCatalogNavigable(
                 StatisticsScreen(averageEngineCapacity)
             }
         }
-    }
-}
-
-@Composable
-fun StatisticsScreen(averageEngineCapacity: Double) {
-    Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = "Average engine capacity: ${String.format("%.2f", averageEngineCapacity)}",
-            modifier = Modifier.align(Alignment.Center)
-        )
     }
 }
