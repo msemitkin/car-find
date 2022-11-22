@@ -7,4 +7,5 @@
     <string name="color_label">Color</string>
     <string name="engine_capacity_label">Engine Capacity</string>
     <string name="price_label">Price</string>
+    <string name="statistics_button_text">Statistics</string>
 </resources>

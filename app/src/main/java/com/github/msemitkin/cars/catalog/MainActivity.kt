@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.room.Room
 import com.github.msemitkin.cars.catalog.dao.CarService
 import com.github.msemitkin.cars.catalog.dao.Database
+import com.github.msemitkin.cars.catalog.service.StatisticsService
 import com.github.msemitkin.cars.catalog.ui.theme.CarscatalogTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +26,8 @@ class MainActivity : ComponentActivity() {
                     val carService = CarService(db.carDao())
                     CarsCatalogNavigable(
                         saveCarService = carService,
-                        getCarService = carService
+                        getCarService = carService,
+                        statisticsService = StatisticsService(carService)
                     )
                 }
             }

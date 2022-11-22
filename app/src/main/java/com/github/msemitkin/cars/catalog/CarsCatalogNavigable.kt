@@ -1,8 +1,12 @@
 package com.github.msemitkin.cars.catalog
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,12 +20,14 @@ import com.github.msemitkin.cars.catalog.dao.SaveCarService
 import com.github.msemitkin.cars.catalog.screens.AddNewCarScreen
 import com.github.msemitkin.cars.catalog.screens.CarScreen
 import com.github.msemitkin.cars.catalog.screens.Homepage
+import com.github.msemitkin.cars.catalog.service.StatisticsService
 
 @Composable
 fun CarsCatalogNavigable(
     navHostController: NavHostController = rememberNavController(),
     saveCarService: SaveCarService,
-    getCarService: GetCarService
+    getCarService: GetCarService,
+    statisticsService: StatisticsService
 ) {
     Scaffold(
         topBar = { ApplicationHeader() }
@@ -35,7 +41,8 @@ fun CarsCatalogNavigable(
             composable("homepage") {
                 Homepage(
                     onAddNewClick = { navHostController.navigate("add_new_car") },
-                    onSearchClick = { navHostController.navigate("search") }
+                    onSearchClick = { navHostController.navigate("search") },
+                    onStatisticsClick = { navHostController.navigate("statistics") }
                 )
             }
             composable("add_new_car") {
@@ -56,6 +63,24 @@ fun CarsCatalogNavigable(
                 val car = getCarService.getById(carId)
                 CarScreen(car = car)
             }
+            composable("statistics") {
+                val averageEngineCapacity = statisticsService.getAverageEngineCapacity()
+                StatisticsScreen(averageEngineCapacity)
+            }
         }
+    }
+}
+
+@Composable
+fun StatisticsScreen(averageEngineCapacity: Double) {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Average engine capacity: ${String.format("%.2f", averageEngineCapacity)}",
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }

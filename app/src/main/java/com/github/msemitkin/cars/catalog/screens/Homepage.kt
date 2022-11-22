@@ -19,7 +19,8 @@ import com.github.msemitkin.cars.catalog.R
 @Composable
 fun Homepage(
     onAddNewClick: () -> Unit,
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit,
+    onStatisticsClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -35,11 +36,14 @@ fun Homepage(
         Button(onClick = onAddNewClick) {
             Text(text = stringResource(R.string.add_new_button_text))
         }
+        Button(onClick = onStatisticsClick) {
+            Text(text = stringResource(R.string.statistics_button_text))
+        }
     }
 }
 
 @Composable
 @Preview
 fun HomepagePreview() {
-    Homepage(onAddNewClick = {}, onSearchClick = {})
+    Homepage(onAddNewClick = {}, onSearchClick = {}, onStatisticsClick = {})
 }
