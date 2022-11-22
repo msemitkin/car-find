@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,11 +27,14 @@ import com.github.msemitkin.cars.catalog.R
 import com.github.msemitkin.cars.catalog.components.Select
 import com.github.msemitkin.cars.catalog.components.util.clickableWithNoIndication
 import com.github.msemitkin.cars.catalog.models.BodyType
+import com.github.msemitkin.cars.catalog.models.Car
 import com.github.msemitkin.cars.catalog.models.CarBrand
 import com.github.msemitkin.cars.catalog.models.Color
 
 @Composable
-fun AddNewCarScreen() {
+fun AddNewCarScreen(
+    onSave: (Car) -> Unit
+) {
     var hideKeyboard by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -44,10 +48,17 @@ fun AddNewCarScreen() {
                 .padding(PaddingValues(horizontal = 20.dp, vertical = 100.dp)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var selectedBodyTypeState by remember { mutableStateOf("") }
             var selectedCarBrandState by remember { mutableStateOf("") }
+            var selectedBodyTypeState by remember { mutableStateOf("") }
             var selectedColorState by remember { mutableStateOf("") }
             var engineCapacityState by remember { mutableStateOf<Double?>(null) }
+            var priceState by remember { mutableStateOf<Int?>(null) }
+
+            var carBrandError by remember { mutableStateOf(false) }
+            var bodyTypeError by remember { mutableStateOf(false) }
+            var colorError by remember { mutableStateOf(false) }
+            var engineCapacityError by remember { mutableStateOf(false) }
+            var priceError by remember { mutableStateOf(false) }
 
             val bodyTypes = BodyType.values().map { it.name }.sorted()
             val carBrands = CarBrand.values().map { it.name }.sorted()
@@ -56,17 +67,20 @@ fun AddNewCarScreen() {
             Select(
                 items = bodyTypes,
                 selectedItem = selectedBodyTypeState,
-                label = stringResource(R.string.body_type_label)
+                label = stringResource(R.string.body_type_label),
+                isError = bodyTypeError
             ) { selectedItem -> selectedBodyTypeState = selectedItem }
             Select(
                 items = carBrands,
                 selectedItem = selectedCarBrandState,
-                label = stringResource(R.string.car_brand_label)
+                label = stringResource(R.string.car_brand_label),
+                isError = carBrandError
             ) { selectedItem -> selectedCarBrandState = selectedItem }
             Select(
                 items = colors,
                 selectedItem = selectedColorState,
-                label = stringResource(R.string.color_label)
+                label = stringResource(R.string.color_label),
+                isError = colorError
             ) { selectedItem -> selectedColorState = selectedItem }
             OutlinedTextField(
                 value = engineCapacityState?.toString() ?: "",
@@ -76,14 +90,83 @@ fun AddNewCarScreen() {
                         else -> doubleValue
                     }
                 },
+                isError = engineCapacityError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 label = { Text(text = stringResource(R.string.engine_capacity_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
+            OutlinedTextField(
+                value = priceState?.toString() ?: "",
+                onValueChange = {
+                    priceState = when (val intValue = it.toIntOrNull()) {
+                        null -> priceState
+                        else -> intValue
+                    }
+                },
+                isError = priceError,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                label = { Text(text = stringResource(R.string.price_label)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Button(onClick = {
+                fun valid(): Boolean {
+                    var valid = true
+                    if (selectedCarBrandState.isBlank()) {
+                        carBrandError = true
+                        valid = false
+                    } else {
+                        carBrandError = false
+                    }
+                    if (selectedBodyTypeState.isBlank()) {
+                        bodyTypeError = true
+                        valid = false
+                    } else {
+                        bodyTypeError = false
+                    }
+                    if (selectedColorState.isBlank()) {
+                        colorError = true
+                        valid = false
+                    } else {
+                        colorError = false
+                    }
+                    if (priceState == null || priceState!! <= 0) {
+                        priceError = true
+                        valid = false
+                    } else {
+                        priceError = false
+                    }
+                    if (engineCapacityState == null || engineCapacityState!! <= 0) {
+                        engineCapacityError = true
+                        valid = false
+                    } else {
+                        engineCapacityError = false
+                    }
+                    return valid
+                }
+                if (valid()) {
+                    focusManager.clearFocus()
+                    onSave(
+                        Car(
+                            CarBrand.valueOf(selectedCarBrandState),
+                            BodyType.valueOf(selectedBodyTypeState),
+                            Color.valueOf(selectedColorState),
+                            priceState!!,
+                            engineCapacityState!!
+                        )
+                    )
+                }
+            }) {
+                Text("Save")
+            }
+
             if (hideKeyboard) {
                 focusManager.clearFocus()
                 hideKeyboard = false

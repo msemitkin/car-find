@@ -6,4 +6,5 @@
     <string name="car_brand_label">Car Brand</string>
     <string name="color_label">Color</string>
     <string name="engine_capacity_label">Engine Capacity</string>
+    <string name="price_label">Price</string>
 </resources>

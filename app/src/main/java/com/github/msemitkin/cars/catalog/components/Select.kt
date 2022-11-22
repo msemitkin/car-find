@@ -24,6 +24,7 @@ fun Select(
     items: List<String>,
     selectedItem: String,
     label: String = "",
+    isError: Boolean = false,
     onSelect: (String) -> Unit
 ) {
     var expanded: Boolean by remember { mutableStateOf(false) }
@@ -41,7 +42,8 @@ fun Select(
                 modifier = Modifier.size(10.dp)
             )
         },
-        enabled = false
+        enabled = false,
+        isError = isError
     )
     DropdownMenu(
         expanded = expanded,
