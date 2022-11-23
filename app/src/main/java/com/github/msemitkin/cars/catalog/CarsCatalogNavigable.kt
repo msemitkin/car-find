@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.github.msemitkin.cars.catalog.components.ApplicationHeader
 import com.github.msemitkin.cars.catalog.models.Color
 import com.github.msemitkin.cars.catalog.screens.AddNewCarScreen
+import com.github.msemitkin.cars.catalog.screens.AuthorScreen
 import com.github.msemitkin.cars.catalog.screens.CarScreen
 import com.github.msemitkin.cars.catalog.screens.CarsScreen
 import com.github.msemitkin.cars.catalog.screens.Homepage
@@ -32,7 +33,11 @@ fun CarsCatalogNavigable(
     statisticsService: StatisticsService,
 ) {
     Scaffold(
-        topBar = { ApplicationHeader() }
+        topBar = {
+            ApplicationHeader(onAuthorClick = {
+                navHostController.navigate("author")
+            })
+        }
     ) {
         NavHost(
             navController = navHostController,
@@ -85,6 +90,9 @@ fun CarsCatalogNavigable(
             composable("statistics") {
                 val averageEngineCapacity = statisticsService.getAverageEngineCapacity()
                 StatisticsScreen(averageEngineCapacity)
+            }
+            composable("author") {
+                AuthorScreen()
             }
         }
     }

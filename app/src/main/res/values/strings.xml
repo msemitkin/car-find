@@ -10,4 +10,5 @@
     <string name="statistics_button_text">Statistics</string>
     <string name="save_button_text">Save</string>
     <string name="no_cars_found_message">No cars found</string>
+    <string name="author_name">Mykhailo Semitkin</string>
 </resources>
