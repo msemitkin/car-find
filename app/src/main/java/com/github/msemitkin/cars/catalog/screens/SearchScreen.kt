@@ -19,12 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.msemitkin.cars.catalog.R
 import com.github.msemitkin.cars.catalog.components.Select
+import com.github.msemitkin.cars.catalog.models.BodyType
 import com.github.msemitkin.cars.catalog.models.Color
 
 @Composable
-fun SearchScreen(onSearchClick: (Color) -> Unit) {
+fun SearchScreen(onSearchClick: (Color, BodyType) -> Unit) {
     var selectedColorState by remember { mutableStateOf("") }
-    var isError by remember { mutableStateOf(false) }
+    var selectedBodyTypeState by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,16 +41,18 @@ fun SearchScreen(onSearchClick: (Color) -> Unit) {
                 label = "Color",
                 items = Color.values().map { it.name },
                 selectedItem = selectedColorState,
-                onSelect = { selectedColorState = it },
-                isError = isError
+                onSelect = { selectedColorState = it }
+            )
+            Select(
+                label = "Body type",
+                items = BodyType.values().map { it.name },
+                selectedItem = selectedBodyTypeState,
+                onSelect = { selectedBodyTypeState = it }
             )
             Button(
                 onClick = {
-                    if (selectedColorState.isEmpty()) {
-                        isError = true
-                    } else {
-                        isError = false
-                        onSearchClick(Color.valueOf(selectedColorState))
+                    if (!selectedColorState.isEmpty()) {
+                        onSearchClick(Color.valueOf(selectedColorState), BodyType.valueOf(selectedBodyTypeState))
                     }
                 }
             ) {

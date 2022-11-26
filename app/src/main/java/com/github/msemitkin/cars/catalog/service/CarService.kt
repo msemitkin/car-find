@@ -11,8 +11,10 @@ interface GetCarService {
     fun getById(id: Long): Car
 }
 
+data class SearchCriteria(val color: Color, val bodyType: BodyType)
+
 interface GetCarsByColorService {
-    fun getByColor(color: Color): List<Car>
+    fun getByCriteria(searchCriteria: SearchCriteria): List<Car>
 }
 
 interface SaveCarService {
@@ -44,8 +46,8 @@ class CarService(private val carDao: CarDao) :
         return toCar(carEntity)
     }
 
-    override fun getByColor(color: Color): List<Car> {
-        val entities = carDao.getByColor(color.name)
+    override fun getByCriteria(searchCriteria: SearchCriteria): List<Car> {
+        val entities = carDao.getByCriteria(searchCriteria.color.name, searchCriteria.bodyType.name)
         return entities.map { toCar(it) }
     }
 

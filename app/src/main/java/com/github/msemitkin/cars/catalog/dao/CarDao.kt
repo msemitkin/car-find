@@ -10,8 +10,8 @@ interface CarDao {
     @Query("SELECT * FROM Car WHERE id = :id")
     fun getById(id: Long): CarEntity
 
-    @Query("SELECT * FROM Car WHERE color = :color")
-    fun getByColor(color: String): List<CarEntity>
+    @Query("SELECT * FROM Car WHERE color = :color AND bodyType = :bodyType")
+    fun getByCriteria(color: String, bodyType: String): List<CarEntity>
 
     @Query("SELECT * FROM Car")
     fun getAll(): List<CarEntity>

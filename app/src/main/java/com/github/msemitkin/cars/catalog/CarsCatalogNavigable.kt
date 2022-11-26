@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.github.msemitkin.cars.catalog.components.ApplicationHeader
+import com.github.msemitkin.cars.catalog.models.BodyType
 import com.github.msemitkin.cars.catalog.models.Color
 import com.github.msemitkin.cars.catalog.screens.AddNewCarScreen
 import com.github.msemitkin.cars.catalog.screens.AuthorScreen
@@ -22,6 +23,7 @@ import com.github.msemitkin.cars.catalog.screens.StatisticsScreen
 import com.github.msemitkin.cars.catalog.service.GetCarService
 import com.github.msemitkin.cars.catalog.service.GetCarsByColorService
 import com.github.msemitkin.cars.catalog.service.SaveCarService
+import com.github.msemitkin.cars.catalog.service.SearchCriteria
 import com.github.msemitkin.cars.catalog.service.StatisticsService
 
 @Composable
@@ -63,19 +65,25 @@ fun CarsCatalogNavigable(
             }
             composable("search") {
                 SearchScreen(
-                    onSearchClick = { color ->
-                        navHostController.navigate("cars?color=${color.name}")
+                    onSearchClick = { color, bodyType ->
+                        navHostController.navigate("cars?color=${color.name}&bodyType=${bodyType.name}")
                     }
                 )
             }
             composable(
-                route = "cars?color={color}",
-                arguments = listOf(navArgument("color") { type = NavType.StringType })
+                route = "cars?color={color}&bodyType={bodyType}",
+                arguments = listOf(
+                    navArgument("color") { type = NavType.StringType },
+                    navArgument("bodyType") { type = NavType.StringType },
+                )
             ) { backStackEntry ->
                 val color = backStackEntry.arguments
                     ?.getString("color")!!
                     .let { Color.valueOf(it) }
-                val cars = getCarsByColorService.getByColor(color)
+                val bodyType = backStackEntry.arguments
+                    ?.getString("bodyType")!!
+                    .let { BodyType.valueOf(it) }
+                val cars = getCarsByColorService.getByCriteria(SearchCriteria(color, bodyType))
                 CarsScreen(cars)
             }
             composable(
