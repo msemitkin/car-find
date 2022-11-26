@@ -34,9 +34,10 @@ fun CarsCatalogNavigable(
 ) {
     Scaffold(
         topBar = {
-            ApplicationHeader(onAuthorClick = {
-                navHostController.navigate("author")
-            })
+            ApplicationHeader(
+                onAuthorClick = { navHostController.navigate("author") },
+                onAppNameClick = { navHostController.navigate("homepage") }
+            )
         }
     ) {
         NavHost(
